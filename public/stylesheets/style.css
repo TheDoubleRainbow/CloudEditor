@@ -9,4 +9,8 @@ a {
   width: 600px;
   height: 600px; }
 
+.cursor {
+  position: absolute;
+  border-left: 2px solid gold; }
+
 /*# sourceMappingURL=style.css.map */

@@ -63,25 +63,61 @@
 /******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 0:
+/******/ ([
+/* 0 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_editor__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_editor__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_editor___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__index_editor__);
 
 
 /***/ }),
-
-/***/ 8:
+/* 1 */
 /***/ (function(module, exports) {
 
 var editor = ace.edit("editor");
-	console.log(editor.selection.getCursor())
+window.marker = {};
+marker.cursors = []
+marker.update = function(html, markerLayer, session, config) {
+    var start = config.firstRow, end = config.lastRow;
+    var cursors = this.cursors
+    for (var i = 0; i < cursors.length; i++) {
+        var pos = this.cursors[i];
+        if (pos.row < start) {
+            continue
+        } else if (pos.row > end) {
+            break
+        } else {
+            // compute cursor position on screen
+            // this code is based on ace/layer/marker.js
+            var screenPos = session.documentToScreenPosition(pos)
+
+            var height = config.lineHeight;
+            var width = config.characterWidth;
+            var top = markerLayer.$getTop(screenPos.row, config);
+            var left = markerLayer.$padding + screenPos.column * width;
+            html.push(
+                "<div class='cursor' style='",
+                "height:", height, "px;",
+                "top:", top, "px;",
+                "left:", left, "px; width:", width, "px'></div>"
+            );
+        }
+    }
+}
+marker.redraw = function() {
+   this.session._signal("changeFrontMarker");
+}
+marker.addCursor = function(row, column) {
+    this.cursors.push({row: row, column: column})
+    marker.redraw()
+}
+marker.session = editor.session;
+marker.session.addDynamicMarker(marker, true)
+// call marker.session.removeMarker(marker.id) to remove it
+// call marker.redraw after changing one of cursors
 
 /***/ })
-
-/******/ });
+/******/ ]);
