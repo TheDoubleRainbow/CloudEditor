@@ -1,4 +1,14 @@
 var editor = ace.edit("editor");
+
+editor.commands.on("exec", function(e) { 
+  var rowCol = editor.selection.getCursor();
+  if ((rowCol.row == 0) || ((rowCol.row + 1) == editor.session.getLength())) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+});
+
+
 window.marker = {};
 marker.cursors = []
 marker.update = function(html, markerLayer, session, config) {
